@@ -1,9 +1,10 @@
 import React,{Component} from 'react';
-import {StyleSheet, Text, View,TextInput,TouchableWithoutFeedback} from 'react-native';
+import {StyleSheet, Text, View,TextInput,TouchableWithoutFeedback,Image} from 'react-native';
 import Storage from 'react-native-storage';
 import {height, width,newSize} from '../utils/UtilityValue'
 import { NavigationActions } from 'react-navigation';
 import navigationGo from '../actions/NavigationActionsMethod'
+import TopBarComponent from '../components/homeScreenComponent/TopBarComponent'
 import { connect } from 'react-redux';
 class HomeScreen extends Component{
     constructor(props) {
@@ -25,8 +26,9 @@ class HomeScreen extends Component{
     render(){
         return(
             <View style={styles.container}>
-                <View>
-                    <Text>经纬物联</Text>
+               <TopBarComponent title="智能锁"/>
+                <View style={{position:'absolute',top:0,zIndex:8}}>
+                    <Image source={require('../images/bg.png')}/>
                 </View>
             </View>
         )
@@ -38,8 +40,6 @@ class HomeScreen extends Component{
 const styles=StyleSheet.create({
     container: {
         flex:1,
-        alignItems:'center',
-        justifyContent:'center',
         backgroundColor:'#fff'
     },
 })

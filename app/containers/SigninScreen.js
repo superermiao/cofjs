@@ -4,9 +4,7 @@ import { NavigationActions } from 'react-navigation';
 import {fetchJSON} from '../utils/NetUtils'
 import {height, width,newSize} from '../utils/UtilityValue'
 import navigationGo from '../actions/NavigationActionsMethod'
-import userfn from  '../actions/UserActions'
-import InputBoard from '../components/keyboardSpacer/KeyboardComponent'
-import InputScrollView from 'react-native-input-scroll-view';
+import LoginButtonComponent from '../components/commonComponent/LoginButtonComponent'
 class SigninScreen extends  Component{
     constructor(props){
         super(props);
@@ -20,6 +18,7 @@ class SigninScreen extends  Component{
             hiddenName:'',
             hiddenID:'',
             verify:'',
+            errorText:'',
         }
     }
 
@@ -36,18 +35,39 @@ class SigninScreen extends  Component{
             Ver:loginArry[1].substr(81,3),
             Index:loginArry[1].substr(84,1)
         };
-
         console.log("数据存储成功："+JSON.stringify(uregResData));
-        /*this.props.dispatch(userfn('SignUp',uregResData));*/
         this.props.navigation.dispatch(navigationGo('reset'));
     }
 
+ /*   checkUtiles(){
+        const regData={
+            cardId:/^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9]|X)$/,
+            tel:/^1[0-9]{10}$/,
+            password:/^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,12}$/,
+        }
+            if(!regData.cardId.test(this.state.cardId)){
+                this.state.errorText="身份证号码不正确";
+                return false;
+            }else if(!regData.tel.test(this.state.tel)){
+                this.state.errorText="电话号码不正确";
+                return false;
+            }else if(!regData.password.test(this.state.password)){
+                this.state.errorText="请输入长度为6-12之间大小写字母和数字的组合，不能使用特殊字符";
+                return false;
+            }else {
+                this.state.errorText="";
+                return true;
+            }
+    }*/
+
     postReg() {
        var user=this.state.name + "|" + this.state.cardId + "|" + this.state.tel + "|" + this.state.password + "|" + this.state.tel;
-        fetchJSON("reg",user, function (data) {
-            console.log(data);
-            this.saveUregRes(json.payload);
-        });
+           if(this.checkUtiles()){
+               fetchJSON("reg",user, function (data) {
+                   console.log(data);
+                   this.saveUregRes(json.payload);
+               });
+           }
     }
     render(){
         return(
@@ -56,11 +76,11 @@ class SigninScreen extends  Component{
                     <Text style={{color:'#FFFFFF',fontSize:20*newSize}}>注册</Text>
                 </View>
 
-                <View style={styles.textInputView}>
+                <ScrollView style={styles.textInputView}>
                     <Text style={styles.hiddenText}>{this.state.hiddenName}</Text>
                     <TextInput
                         style={styles.txtInput}
-                        placeholder={'输入姓名'}
+                        placeholder={'请输入用户名'}
                         value={this.state.name}
                         onChangeText={(name) => this.setState({name})}
                         onFocus={()=>this.setState({
@@ -118,15 +138,9 @@ class SigninScreen extends  Component{
                         </View>
                     </View>
 
-
-
                     <Text style={styles.errorText}>{this.state.errorText}</Text>
-                    <TouchableWithoutFeedback onPress={()=>this.postReg()}>
-                        <View style={styles.loginButton}>
-                            <Text style={styles.loginText}>立即注册</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
-                </View>
+                    <LoginButtonComponent onPress={()=>this.postReg()} name="立即注册"/>
+                </ScrollView>
 
                 <Text style={styles.reg} onPress={()=>this.props.navigation.dispatch(navigationGo('push','LoginScreen',{}))}>已有帐号,现在登录</Text>
             </View>
@@ -166,26 +180,6 @@ const styles = StyleSheet.create({
     errorText:{
         color:'#FF8283',
         fontSize:newSize*12
-    },
-    loginButton:{
-        width:300*newSize,
-        borderRadius:60*newSize,
-        height:40*newSize,
-        backgroundColor:'#6CD6FF',
-        marginTop:28*newSize,
-        alignItems:'center',
-        justifyContent:'center',
-        //以下是阴影属性：
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.5,
-        shadowRadius: 5,
-        shadowColor: '#000000',
-        //注意：这一句是可以让安卓拥有灰色阴影
-        elevation: 1,
-    },
-    loginText:{
-        color:"#FFFFFF",
-        fontSize:16*newSize,
     },
     reg:{
         position:'absolute',

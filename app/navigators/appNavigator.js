@@ -12,6 +12,7 @@ import WelcomeScreen from "../containers/WelcomeScreen"
 import LoginScreen from "../containers/LoginScreen"
 import ForgetPassScreen from "../containers/ForgetPassScreen"
 import BindScreen from "../containers/BindScreen"
+import HomeScreen from "../containers/HomeScreen";
 const AppScreen={
     WelcomeScreen:{
         screen:WelcomeScreen
@@ -27,6 +28,9 @@ const AppScreen={
     },
     BindScreen:{
         screen:BindScreen
+    },
+    HomeScreen:{
+        screen:HomeScreen
     },
 }
 

@@ -4,7 +4,8 @@ import {height, width,newSize} from '../utils/UtilityValue'
 import { NavigationActions } from 'react-navigation';
 import navigationGo from '../actions/NavigationActionsMethod'
 import {fetchJSON} from '../utils/NetUtils'
-import authUser from "../reducers/userState";
+import LoginButtonComponent from '../components/commonComponent/LoginButtonComponent'
+
 let oldUregData={};
 var saveLoginRes=function (res) {
     //处理登录返回的数据
@@ -70,10 +71,6 @@ class LoginScreen extends  Component{
             console.log('用户信息本地存储获取失败', err)
         });
     }
-    //登录验证
-    checkLogin(){
-
-    }
 
     //登录
     postLogin(){
@@ -132,7 +129,6 @@ class LoginScreen extends  Component{
                     <TextInput
                     placeholder={'输入电话'}
                     maxLength={11}
-                    autoFocus={true}
                     value={this.state.tel}
                     onChangeText={(tel) => this.setState({tel})}
                     style={styles.txtInput}
@@ -153,15 +149,11 @@ class LoginScreen extends  Component{
                         })}
                     />
                     <Text style={styles.errorText}>{this.state.errorText}</Text>
-                    <TouchableWithoutFeedback onPress={()=>this.postLogin()}>
-                        <View style={styles.loginButton}>
-                            <Text style={styles.loginText}>登录</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
+                    <LoginButtonComponent onPress={()=>this.postLogin()} name="登录"/>
                 </View>
 
                     <Text style={styles.forgetPass} onPress={()=>this.props.navigation.dispatch(navigationGo('push','ForgetPassScreen',{}))}>忘记密码?</Text>
-                    <Text style={styles.reg} onPress={()=>this.toUreg()}>未有帐号？现在注册</Text>
+                    <Text style={styles.reg} onPress={()=>this.props.navigation.dispatch(navigationGo('push','HomeScreen',{}))}>未有帐号？现在注册</Text>
             </View>
         )
     }
@@ -193,27 +185,6 @@ const styles=StyleSheet.create({
     errorText:{
         color:'#FF8283',
         fontSize:newSize*12
-    },
-    loginButton:{
-        width:300*newSize,
-        borderRadius:60*newSize,
-        height:40*newSize,
-        backgroundColor:'#6CD6FF',
-        marginTop:28*newSize,
-        alignItems:'center',
-        justifyContent:'center',
-        //以下是阴影属性：
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.5,
-        shadowRadius: 5,
-        shadowColor: '#000000',
-        //注意：这一句是可以让安卓拥有灰色阴影
-        elevation: 1,
-
-    },
-    loginText:{
-        color:"#FFFFFF",
-        fontSize:16*newSize,
     },
     forgetPass:{
         position:'absolute',

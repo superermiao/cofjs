@@ -26,6 +26,7 @@ class TabBarComponent extends Component{
                             <Image source={require('./images/Back2.png')} style={styles.back}/>
                         </View>
                     </TouchableWithoutFeedback>
+
                     <Text style={styles.titleText}>{this.props.title}</Text>
                 </View>
             </View>
@@ -35,8 +36,8 @@ class TabBarComponent extends Component{
 
 const styles = StyleSheet.create({
     container:{
-        marginTop:20*newSize,
-        height:44*newSize,
+        marginTop:0*newSize,
+        height:60*newSize,
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'center',
