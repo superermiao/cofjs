@@ -7,6 +7,7 @@ import navigationGo from '../../actions/NavigationActionsMethod';
 class TabBarComponent extends Component{
     constructor(props) {
         super(props)
+
     }
 
     shouldComponentUpdate(nextProps,nextState){
