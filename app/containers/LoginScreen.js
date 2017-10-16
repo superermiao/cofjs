@@ -153,7 +153,7 @@ class LoginScreen extends  Component{
                 </View>
 
                     <Text style={styles.forgetPass} onPress={()=>this.props.navigation.dispatch(navigationGo('push','ForgetPassScreen',{}))}>忘记密码?</Text>
-                    <Text style={styles.reg} onPress={()=>this.props.navigation.dispatch(navigationGo('push','HomeScreen',{}))}>未有帐号？现在注册</Text>
+                    <Text style={styles.reg} onPress={()=>this.props.navigation.dispatch(navigationGo('push','Tab',{}))}>未有帐号？现在注册</Text>
             </View>
         )
     }

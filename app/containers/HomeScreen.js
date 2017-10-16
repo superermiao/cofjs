@@ -1,12 +1,16 @@
 import React,{Component} from 'react';
-import {StyleSheet, Text, View,TextInput,TouchableWithoutFeedback,Image} from 'react-native';
+import {StyleSheet, Text, View,TextInput,TouchableWithoutFeedback,Image,StatusBar} from 'react-native';
 import Storage from 'react-native-storage';
 import {height, width,newSize} from '../utils/UtilityValue'
 import { NavigationActions } from 'react-navigation';
 import navigationGo from '../actions/NavigationActionsMethod'
 import TopBarComponent from '../components/homeScreenComponent/TopBarComponent'
+import FootBarComponent from '../navigators/tabNavigator'
+
 import { connect } from 'react-redux';
 class HomeScreen extends Component{
+
+
     constructor(props) {
         super(props);
         this.state={
@@ -63,6 +67,7 @@ class HomeScreen extends Component{
                         <Text style={{marginLeft:8*newSize}}>连接状态:{this.state.connect}</Text>
                     </View>
                 </View>
+               {/* <FootBarComponent screenProps={} />*/}
             </View>
         )
     }
