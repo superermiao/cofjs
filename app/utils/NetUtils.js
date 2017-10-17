@@ -14,7 +14,9 @@ export  const fetchJSON=function (topic,payload,callback) {
     }).then((response) => response.json()
     ).then((json) => {
             console.log(json);
-            callback(json.payload);
+
+                callback(json);
+
         }).catch((err)=>{
         console.log(err);
     });

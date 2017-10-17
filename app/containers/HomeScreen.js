@@ -35,10 +35,13 @@ class HomeScreen extends Component{
             return false
         }
     }
+    toBind(){
+        this.props.navigation.dispatch('push','BindScreen',{})
+    }
     render(){
         return(
             <View style={styles.container}>
-               <TopBarComponent title="智能锁"/>
+               <TopBarComponent title="智能锁" AddBind={this.toBind()}/>
                 <View style={{position:'absolute',top:0,zIndex:8}}>
                     <Image source={require('../images/bg.png')}/>
                 </View>

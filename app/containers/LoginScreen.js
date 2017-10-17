@@ -31,7 +31,7 @@ var saveLoginRes=function (res) {
         expires:null,
     });
     return userData;
-}
+};
 class LoginScreen extends  Component{
     constructor(props){
         super(props);
@@ -82,9 +82,9 @@ class LoginScreen extends  Component{
         }).then(res=>{
             console.log(res);
             var uidtype,msgseq,passwd,ver,index,tempkey,mstep;
-            mstep=100000;
+            mstep=100;
             tempkey=res.TempKey.match(/\d{8}/g);
-            msgseq=res.Uid.toString()+mstep.toString();
+            msgseq= res.Uid.toString()+mstep.toString();
             /*
             //随机数的生成
             randomkey=(Math.floor(Math.random()*10000) % 8+1).toString();
@@ -103,9 +103,15 @@ class LoginScreen extends  Component{
                 console.log("你好，你登录传输的数据是："+user);
                 fetchJSON("login",user, function (data) {
                     console.log(data);
-                    var bindData=saveLoginRes(data);
-                    this.props.navigation.dispatch(navigationGo('push','HomeScreen',{}));
+                    if(data.error==='30'){
+                        alert('密码错误');
+                    }else if(data.error==='31'){
+                        alert('手机号未注册');
+                    }else if(data.error==='0'){
+                        saveLoginRes(data.payload);
+                    }
                 });
+               this.props.navigation.dispatch(navigationGo('push','Tab',{}));
             }
         ).catch((err)=>{
             console.log(err);
@@ -153,7 +159,7 @@ class LoginScreen extends  Component{
                 </View>
 
                     <Text style={styles.forgetPass} onPress={()=>this.props.navigation.dispatch(navigationGo('push','ForgetPassScreen',{}))}>忘记密码?</Text>
-                    <Text style={styles.reg} onPress={()=>this.props.navigation.dispatch(navigationGo('push','Tab',{}))}>未有帐号？现在注册</Text>
+                    <Text style={styles.reg} onPress={()=>this.toUreg()}>未有帐号？现在注册</Text>
             </View>
         )
     }

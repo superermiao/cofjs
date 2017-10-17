@@ -5,6 +5,33 @@ import {fetchJSON} from '../utils/NetUtils'
 import {height, width,newSize} from '../utils/UtilityValue'
 import navigationGo from '../actions/NavigationActionsMethod'
 import LoginButtonComponent from '../components/commonComponent/LoginButtonComponent'
+//处理注册返回之后的数据
+let saveUregRes=function (res){
+    let loginArry = res.split('|');
+    console.log(loginArry);
+    let uregResData={
+        Uid:loginArry[0],
+        TempKey:loginArry[1].slice(0,40),
+        MsgSeq:loginArry[2],
+        UidType:loginArry[3],
+        SecretKey:loginArry[4],
+        PrivateKey:loginArry[5],
+        Ver:loginArry[1].substr(81,3),
+        Index:loginArry[1].substr(84,1)
+    };
+    storage.save({
+        key:'user',
+        data:uregResData,
+        expires:null,
+    }).then(()=>{
+        console.log("数据存储成功："+JSON.stringify(uregResData));
+        return true;
+    }).catch((err)=>{
+        console.log("存储失败"+err);
+        return false;
+    });
+
+};
 class SigninScreen extends  Component{
     constructor(props){
         super(props);
@@ -20,23 +47,6 @@ class SigninScreen extends  Component{
             verify:'',
             errorText:'',
         }
-    }
-
-    saveUregRes(res){
-        var loginArry=res.split('|');
-        console.log(loginArry);
-        var uregResData={
-            Uid:loginArry[0],
-            TempKey:loginArry[1].slice(0,40),
-            MsgSeq:loginArry[2],
-            UidType:loginArry[3],
-            SecretKey:loginArry[4],
-            PrivateKey:loginArry[5],
-            Ver:loginArry[1].substr(81,3),
-            Index:loginArry[1].substr(84,1)
-        };
-        console.log("数据存储成功："+JSON.stringify(uregResData));
-        this.props.navigation.dispatch(navigationGo('reset'));
     }
 
  /*   checkUtiles(){
@@ -60,14 +70,14 @@ class SigninScreen extends  Component{
             }
     }*/
 
+ //提交的数据
     postReg() {
-       var user=this.state.name + "|" + this.state.cardId + "|" + this.state.tel + "|" + this.state.password + "|" + this.state.tel;
-           if(this.checkUtiles()){
-               fetchJSON("reg",user, function (data) {
-                   console.log(data);
-                   this.saveUregRes(json.payload);
-               });
-           }
+       let user=this.state.name + "|" + this.state.cardId + "|" + this.state.tel + "|" + this.state.password + "|" + '100';
+        fetchJSON("reg",user, function (data) {
+            console.log("注册返回需要保存的数据: "+data);
+            saveUregRes(data);
+        });
+        this.props.navigation.dispatch(navigationGo('push','LoginScreen',{}));
     }
     render(){
         return(

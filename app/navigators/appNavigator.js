@@ -20,54 +20,35 @@ import DiaryScreen from '../containers/DiaryScreen'
 /*TabBar的图标设置*/
 const Unlock_hover=require('../components/homeScreenComponent/images/unlock_hover.png');
 const Unlock=require('../components/homeScreenComponent/images/unlock.png');
-/*配置选项封装*/
-const TabOptions = (tabBarTitle,normalImage,selectedImage,navTitle) => {
+const Diary_hover=require('../components/homeScreenComponent/images/diary_hover.png');
+const Diary=require('../components/homeScreenComponent/images/diary.png');
+const Mine_hover=require('../components/homeScreenComponent/images/mine_hover.png');
+const Mine=require('../components/homeScreenComponent/images/mine.png');
+/*配置TabBar选项封装*/
+const TabOptions = (tabBarTitle,normalImage,selectedImage) => {
     // console.log(navigation);
     const tabBarLabel = tabBarTitle;
     const tabBarIcon = (({tintColor,focused})=> {
         return(
             <Image
                 source={!focused ? normalImage : selectedImage}
-                style={[{height:35,width:35 }, {tintColor: tintColor}]}
             />
         )
     });
-    const headerTitle = navTitle;
-    const headerTitleStyle = {fontSize:22,color:'white',alignSelf:'center'};
-    // header的style
-    const headerStyle = {backgroundColor:'#4ECBFC'};
-    const tabBarVisible = true;
-    // const header = null;
-    return {tabBarLabel,tabBarIcon,headerTitle,headerTitleStyle,headerStyle,tabBarVisible};
+    return {tabBarLabel,tabBarIcon,};
 };
 const navigationOptions = {
     HomeScreen:{
         screen:HomeScreen,
-        navigationOptions:()=>TabOptions('开锁',Unlock,Unlock_hover,'开锁'),
+        navigationOptions:()=>TabOptions('开锁',Unlock,Unlock_hover),
     },
     DiaryScreen:{
         screen:DiaryScreen,
-        navigationOptions: ({navigation,screenProps}) => ({
-            tabBarLabel: '日志',
-            tabBarIcon: ({focused, tintColor}) => (
-                <Image
-                    source={focused?require('../components/homeScreenComponent/images/diary_hover.png')
-                        :require('../components/homeScreenComponent/images/diary.png')}
-                />
-            ),
-        }),
+        navigationOptions: () => TabOptions('日志',Diary,Diary_hover),
     },
     ProfileScreen:{
         screen:ProfileScreen,
-        navigationOptions: ({navigation,screenProps}) => ({
-            tabBarLabel: '我的',
-            tabBarIcon: ({focused, tintColor}) => (
-                <Image
-                    source={focused?require('../components/homeScreenComponent/images/mine_hover.png')
-                        :require('../components/homeScreenComponent/images/mine.png')}
-                />
-            ),
-        }),
+        navigationOptions: () => TabOptions('我的',Mine,Mine_hover),
     },
 
 };
