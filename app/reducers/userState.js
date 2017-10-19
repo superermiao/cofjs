@@ -1,5 +1,7 @@
 const initialState = {
     isLoggedIn: false,//是否登录
+    tel:'',
+    status:null,
     Ver: '',
     Index: '',
     UidType: '',
@@ -13,19 +15,25 @@ const initialState = {
     AppAddr:'',
     masterindex:'',
     viceindex:'',
-    defaultlockid :''
+    defaultlockid :'',
+
+
 };
 
 export default function authUser(state = initialState, action) {
-    if(action.type === 'SignUp'){
+    if(action.type === 'Sign_Up'){
         state = action.payload;
-        return { ...state, isLoggedIn: false };
+        return { ...state, isLoggedIn: false,status:'doing',tel:action.tel};
     }
-    else if (action.type === 'Login'){
+    else if (action.type === 'Log_In'){
         state=action.payload;
-        return {...state, isLoggedIn:true}
-    }else if(action.type === 'Logout'){
-        return { ...state, isLoggedIn: false };
+        return {...state, isLoggedIn:true,status:'done',user:action.user}
+    }else if(action.type ==='Log_Doing'){
+        state=action.payload;
+        return{...state,status:'doing'}
+    }
+    else if(action.type === 'Log_Out'){
+        return { ...state, isLoggedIn: false,status:null,user:{}};
     } else{
         return state;
     }

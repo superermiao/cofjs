@@ -1,13 +1,23 @@
-import navigationGo from '../actions/NavigationActionsMethod'
-export const userfn=function (params,type) {
-    console.log('存储的数据为'+params);
-    storage.save({
-       key:'user',
-       data:params,
-       expires:null,
-   })
-    return {
-        type:type,
-        user:params
+import navigationGo from '../actions/NavigationActionsMethod';
+import {fetchJSON} from "../utils/NetUtils";
+
+export const User_SignAction =function (tel) {
+  return (dispatch)=>{
+      dispatch({'type':'Sign_Up',tel:tel});
+  }
+};
+
+
+export  const User_LoginAction=function (params) {//登录
+    return (dispatch)=>{
+        dispatch({'type':'Log_Doing',});
+
     }
-}
+};
+
+export const  User_LogoutAction = function(dispatch,params) { //注销
+    dispatch({type:'Log_Out'});//dispatch退出登录
+    storage.remove({//清除本地存储
+        key: 'user',
+    });
+};

@@ -5,8 +5,10 @@ import {fetchJSON} from '../utils/NetUtils'
 import {height, width,newSize} from '../utils/UtilityValue'
 import navigationGo from '../actions/NavigationActionsMethod'
 import LoginButtonComponent from '../components/commonComponent/LoginButtonComponent'
+import {User_SignAction,User_LoginAction,User_LogoutAction} from '../actions/UserActions'
+import  {connect} from 'react-redux'
 //处理注册返回之后的数据
-let saveUregRes=function (res){
+const saveUregRes=function (res){
     let loginArry = res.split('|');
     console.log(loginArry);
     let uregResData={
@@ -30,7 +32,6 @@ let saveUregRes=function (res){
         console.log("存储失败"+err);
         return false;
     });
-
 };
 class SigninScreen extends  Component{
     constructor(props){
@@ -38,7 +39,7 @@ class SigninScreen extends  Component{
         this.state={
             name:'',
             cardId:'',
-            tel:'',
+            tel:'15983557575',
             password:'',
             hiddenPhone:'',
             hiddenPass:'',
@@ -72,13 +73,18 @@ class SigninScreen extends  Component{
 
  //提交的数据
     postReg() {
-       let user=this.state.name + "|" + this.state.cardId + "|" + this.state.tel + "|" + this.state.password + "|" + '100';
+    let user=this.state.name + "|" + this.state.cardId + "|" + this.state.tel + "|" + this.state.password + "|" + '100';
+      var self=this;
         fetchJSON("reg",user, function (data) {
             console.log("注册返回需要保存的数据: "+data);
-            saveUregRes(data);
+            if(saveUregRes(data.payload)){
+                self.props.dispatch(User_SignAction(data.payload,self.state.tel));
+                self.props.navigation.dispatch(navigationGo('back'))
+            }
         });
-        this.props.navigation.dispatch(navigationGo('push','LoginScreen',{}));
-    }
+       /* this.props.dispatch(User_SignAction(this.state.tel));
+        this.props.navigation.dispatch(navigationGo('push','LoginScreen',{}));*/
+    };
     render(){
         return(
             <View style={styles.container}>
@@ -131,7 +137,10 @@ class SigninScreen extends  Component{
                             hiddenPass:'密码'
                         })}
                     />
-
+                    <Text style={styles.errorText}>{this.state.errorText}</Text>
+                    <LoginButtonComponent onPress={()=>this.postReg()}  name="立即注册"/>
+                </ScrollView>
+             {/*     //验证码
                     <Text style={styles.hiddenText}>{this.state.hiddenVerify}</Text>
                     <View style={{width:300*newSize,flexDirection:'row'}}>
                         <TextInput
@@ -146,11 +155,9 @@ class SigninScreen extends  Component{
                         <View style={{marginLeft:12*newSize,justifyContent:'center'}}>
                             <Text style={{color:'#6CD6FF'}}>发送验证码</Text>
                         </View>
-                    </View>
+                    </View>*/}
 
-                    <Text style={styles.errorText}>{this.state.errorText}</Text>
-                    <LoginButtonComponent onPress={()=>this.postReg()} name="立即注册"/>
-                </ScrollView>
+
 
                 <Text style={styles.reg} onPress={()=>this.props.navigation.dispatch(navigationGo('push','LoginScreen',{}))}>已有帐号,现在登录</Text>
             </View>
@@ -201,4 +208,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default SigninScreen;
+export default connect()(SigninScreen);

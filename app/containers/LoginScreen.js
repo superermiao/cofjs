@@ -7,11 +7,11 @@ import {fetchJSON} from '../utils/NetUtils'
 import LoginButtonComponent from '../components/commonComponent/LoginButtonComponent'
 
 let oldUregData={};
-var saveLoginRes=function (res) {
+let saveLoginRes=function (res) {
     //处理登录返回的数据
-    var loginArray=res.split('|');
+    let loginArray=res.split('|');
     console.log(loginArray);
-    var uLoginResData={
+    let uLoginResData={
         MsgSeq         : loginArray[0],
         SToken        : loginArray[1],
         TempKey      : loginArray[2].slice(0,40),
@@ -21,10 +21,10 @@ var saveLoginRes=function (res) {
         viceindex      : loginArray[6],
         defaultlockid  : loginArray[7],
     };
-    console.log('登录返回的存储的数据：'+JSON.stringify(uLoginResData));
+    alert('登录返回的存储的数据：'+JSON.stringify(uLoginResData));
     //综合存储的数据
     var userData=Object.assign(oldUregData,uLoginResData);
-    console.log('存储的数据为：'+JSON.stringify(userData));
+    alert('存储的数据为：'+JSON.stringify(userData));
     storage.save({
         key:'user',
         data:userData,
@@ -66,14 +66,17 @@ class LoginScreen extends  Component{
                 Ver       : uregres.Ver,
                 Index     : uregres.Index,
             }
-            console.log("注册返回需要加载保存的数据："+JSON.stringify(oldUregData));
+           alert("注册返回需要加载保存的数据："+JSON.stringify(oldUregData));
         }).catch(err => {
             console.log('用户信息本地存储获取失败', err)
         });
     }
 
-    //登录
+    //登录函数
     postLogin(){
+        //检查输入值
+        //加载注册之后的信息
+        let self=this;
        storage.load({
             key:'user',
             // autoSync(默认为true)意味着在没有找到数据或数据过期时自动调用相应的sync方法
@@ -97,7 +100,7 @@ class LoginScreen extends  Component{
             ver=res.Ver;
             index=res.Index;
             var user=msgseq+"|"+this.state.tel+"|"+uidtype+"|"+passwd+"|"+ver+"|"+index;
-            console.log(user);
+            alert(user);
             return user;
         }).then(user=>{
                 console.log("你好，你登录传输的数据是："+user);
@@ -109,9 +112,10 @@ class LoginScreen extends  Component{
                         alert('手机号未注册');
                     }else if(data.error==='0'){
                         saveLoginRes(data.payload);
+                        self.props.navigation.dispatch(navigationGo('push','Tab',{}));
                     }
                 });
-               this.props.navigation.dispatch(navigationGo('push','Tab',{}));
+
             }
         ).catch((err)=>{
             console.log(err);

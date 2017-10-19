@@ -41,7 +41,7 @@ class HomeScreen extends Component{
     render(){
         return(
             <View style={styles.container}>
-               <TopBarComponent title="智能锁" AddBind={this.toBind()}/>
+               <TopBarComponent title="智能锁" onPress={()=>this.toBind()}/>
                 <View style={{position:'absolute',top:0,zIndex:8}}>
                     <Image source={require('../images/bg.png')}/>
                 </View>

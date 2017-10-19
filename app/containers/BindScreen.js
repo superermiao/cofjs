@@ -23,7 +23,7 @@ class BindScreen extends Component{
 
     postBind(){
         //读取user里的数据
-        storage.load({
+      /*  storage.load({
             key:'user',
             autoSync: true,
             syncInBackground: false
@@ -33,26 +33,35 @@ class BindScreen extends Component{
                 SecretKey : ubindres.SecretKey,
                 PrivateKey: ubindres.PrivateKey,
                 UidType   : ubindres.UidType,
-                DeviceId  :ubindres.DeviceId,
                 LockId    :ubindres.LockId,
                 Ver       : ubindres.Ver,
                 Index     : ubindres.Index,
-            }
+            };
             console.log("绑定需要传的数据加载："+JSON.stringify(UBindData));
             fetchJSON("bind",UBindData, function (data) {
-                console.log("绑定返回需要保存的数据: "+data);
+                alert("绑定返回需要保存的数据: "+data);
             });
         }).catch(err => {
             console.log('用户信息本地存储获取失败', err)
-        });
+        });*/
+
     }
     render(){
         return(
-            <View>
+            <View style={styles.container}>
+                <TabBarComponent title="绑定锁" navigation={this.props.navigation} />
                 <Text onPress={()=>{this.postBind()}}>绑定一把锁</Text>
             </View>
         )
     }
 };
 
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF',
+    },
+});
 export default BindScreen;
