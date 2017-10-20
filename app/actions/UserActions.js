@@ -8,10 +8,10 @@ export const User_SignAction =function (tel) {
 };
 
 
-export  const User_LoginAction=function (params) {//登录
+export  const User_LoginAction=function (tel) {//登录
     return (dispatch)=>{
-        dispatch({'type':'Log_Doing',});
-
+        dispatch({'type':'Log_Doing'});
+        dispatch({'type':'Log_In',tel:tel});
     }
 };
 

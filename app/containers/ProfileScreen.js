@@ -1,9 +1,9 @@
 import React,{Component} from 'react';
 import {StyleSheet, Text, View,TextInput,TouchableWithoutFeedback,AsyncStorage} from 'react-native';
+import  {connect} from 'react-redux';
 import {fetchJSON} from '../utils/NetUtils'
 import {height, width,newSize} from '../utils/UtilityValue'
-import TabBarComponent from '../components/commonComponent/TabBarComponent'
-import navigationGo from '../actions/NavigationActionsMethod'
+
 import TopBarComponent from "../components/homeScreenComponent/TopBarComponent";
 class ProfileScreen extends Component{
     constructor(props){
@@ -14,6 +14,7 @@ class ProfileScreen extends Component{
         return(
             <View style={styles.container}>
                 <TopBarComponent title="个人中心"/>
+                <Text>用户:{this.props.tel}</Text>
             </View>
         )
     }
@@ -23,4 +24,9 @@ const styles = StyleSheet.create({
         flex:1
     },
 });
-export default ProfileScreen;
+function select(state) {
+    return {
+        tel:state.store.tel
+    }
+}
+export default connect(select)(ProfileScreen) ;

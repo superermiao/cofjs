@@ -2,9 +2,11 @@ import React,{Component} from 'react';
 import {StyleSheet, Text, View,TextInput,TouchableWithoutFeedback,Image} from 'react-native';
 import {height, width,newSize} from '../utils/UtilityValue'
 import { NavigationActions } from 'react-navigation';
+import {connect} from 'react-redux';
 import navigationGo from '../actions/NavigationActionsMethod'
 import {fetchJSON} from '../utils/NetUtils'
-import LoginButtonComponent from '../components/commonComponent/LoginButtonComponent'
+import LoginButtonComponent from '../components/commonComponent/LoginButtonComponent';
+import {User_SignAction,User_LoginAction,User_LogoutAction} from '../actions/UserActions'
 
 let oldUregData={};
 let saveLoginRes=function (res) {
@@ -35,8 +37,9 @@ let saveLoginRes=function (res) {
 class LoginScreen extends  Component{
     constructor(props){
         super(props);
+        let that=this;
         this.state={
-            tel:'',
+            tel:that.props.tel||'',
             password:'',
             hiddenPhone:'',
             hiddenPass:'',
@@ -88,13 +91,6 @@ class LoginScreen extends  Component{
             mstep=100;
             tempkey=res.TempKey.match(/\d{8}/g);
             msgseq= res.Uid.toString()+mstep.toString();
-            /*
-            //随机数的生成
-            randomkey=(Math.floor(Math.random()*10000) % 8+1).toString();
-            for (var i = 0; i < 7; i++) {
-                randomkey=randomkey+ (Math.floor(Math.random()*10000) % 10).toString();
-            }
-            */
             uidtype=res.UidType;
             passwd=this.state.password^tempkey[4];
             ver=res.Ver;
@@ -112,6 +108,7 @@ class LoginScreen extends  Component{
                         alert('手机号未注册');
                     }else if(data.error==='0'){
                         saveLoginRes(data.payload);
+                        self.props.dispatch(User_LoginAction(self.state.tel));
                         self.props.navigation.dispatch(navigationGo('push','Tab',{}));
                     }
                 });
@@ -212,4 +209,10 @@ const styles=StyleSheet.create({
     },
 
 });
-export default  LoginScreen;
+function select(state) {
+    console.log('当前的store:'+state.tel);
+    return {
+        tel:state.tel,
+    }
+}
+export default  connect(select)(LoginScreen);

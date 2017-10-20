@@ -27,10 +27,8 @@ const saveUregRes=function (res){
         expires:null,
     }).then(()=>{
         console.log("数据存储成功："+JSON.stringify(uregResData));
-        return true;
     }).catch((err)=>{
         console.log("存储失败"+err);
-        return false;
     });
 };
 class SigninScreen extends  Component{
@@ -39,7 +37,7 @@ class SigninScreen extends  Component{
         this.state={
             name:'',
             cardId:'',
-            tel:'15983557575',
+            tel:'',
             password:'',
             hiddenPhone:'',
             hiddenPass:'',
@@ -74,16 +72,13 @@ class SigninScreen extends  Component{
  //提交的数据
     postReg() {
     let user=this.state.name + "|" + this.state.cardId + "|" + this.state.tel + "|" + this.state.password + "|" + '100';
-      var self=this;
+      let self=this;
         fetchJSON("reg",user, function (data) {
             console.log("注册返回需要保存的数据: "+data);
-            if(saveUregRes(data.payload)){
-                self.props.dispatch(User_SignAction(data.payload,self.state.tel));
-                self.props.navigation.dispatch(navigationGo('back'))
-            }
+            saveUregRes(data.payload);
+            self.props.dispatch(User_SignAction(self.state.tel));
+            self.props.navigation.dispatch(navigationGo('push','LoginScreen',{}));
         });
-       /* this.props.dispatch(User_SignAction(this.state.tel));
-        this.props.navigation.dispatch(navigationGo('push','LoginScreen',{}));*/
     };
     render(){
         return(
