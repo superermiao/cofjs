@@ -5,19 +5,20 @@ import {height, width,newSize} from '../utils/UtilityValue'
 import { NavigationActions } from 'react-navigation';
 import navigationGo from '../actions/NavigationActionsMethod'
 import TopBarComponent from '../components/homeScreenComponent/TopBarComponent'
-import FootBarComponent from '../navigators/tabNavigator'
+import {connect} from 'react-redux';
+import {User_SignAction,User_LoginAction,User_LogoutAction} from '../actions/UserActions'
 
-import { connect } from 'react-redux';
 class HomeScreen extends Component{
 
 
     constructor(props) {
         super(props);
+        let that=this;
         this.state={
             doorName:'暂无',
             doorNumber:'1001000',
-            doorAdr:'广东省深圳市南山区软件产业基地怡化科技金融大厦',
-            bindLock:'您尚未绑定锁!',
+            doorAdr:'广东省深圳市',
+            bindLock:that.props.status?'':'您尚未绑定锁!',
             battery:'无',
             connect:'无'
         }
@@ -26,7 +27,19 @@ class HomeScreen extends Component{
 
     }
     componentDidMount () {
-
+        /*storage.load({
+            key: 'user',
+            autoSync: true,
+            syncInBackground: false,
+        }).then(result => {
+            if (result) {
+                alert('用户信息本地存储获取成功：',result);
+                this.props.dispatch(User_LoginAction(result.tel,result.Uid));
+            }
+        }).catch(err => {
+            console.log('用户信息本地存储获取失败', err);
+            this.goLogin();
+        })*/
     }
     shouldComponentUpdate(nextProps,nextState){
         if(nextState !== this.state || nextProps !== this.props){
@@ -68,7 +81,6 @@ class HomeScreen extends Component{
                         <Text style={{marginLeft:8*newSize}}>连接状态:{this.state.connect}</Text>
                     </View>
                 </View>
-               {/* <FootBarComponent screenProps={} />*/}
             </View>
         )
     }
@@ -101,6 +113,11 @@ const styles=StyleSheet.create({
         marginTop:25*newSize,
         flexDirection:'row'
     }
-})
-
-export default HomeScreen;
+});
+function select(state) {
+    return{
+        uid:state.authUser.uid,
+        tel:state.authUser.tel,
+    }
+}
+export default connect(select)(HomeScreen);

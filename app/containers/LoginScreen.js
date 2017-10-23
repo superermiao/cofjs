@@ -9,7 +9,7 @@ import LoginButtonComponent from '../components/commonComponent/LoginButtonCompo
 import {User_SignAction,User_LoginAction,User_LogoutAction} from '../actions/UserActions'
 
 let oldUregData={};
-let saveLoginRes=function (res) {
+let saveLoginRes=function (res,tel) {
     //处理登录返回的数据
     let loginArray=res.split('|');
     console.log(loginArray);
@@ -22,6 +22,7 @@ let saveLoginRes=function (res) {
         masterindex    : loginArray[5],
         viceindex      : loginArray[6],
         defaultlockid  : loginArray[7],
+        tel:tel,
     };
     alert('登录返回的存储的数据：'+JSON.stringify(uLoginResData));
     //综合存储的数据
@@ -103,12 +104,12 @@ class LoginScreen extends  Component{
                 fetchJSON("login",user, function (data) {
                     console.log(data);
                     if(data.error==='30'){
-                        alert('密码错误');
-                    }else if(data.error==='31'){
                         alert('手机号未注册');
+                    }else if(data.error==='31'){
+                        alert('密码错误');
                     }else if(data.error==='0'){
-                        saveLoginRes(data.payload);
-                        self.props.dispatch(User_LoginAction(self.state.tel));
+                        saveLoginRes(data.payload,self.state.tel);
+                        self.props.dispatch(User_LoginAction(self.state.tel,user.slice(0,7)));
                         self.props.navigation.dispatch(navigationGo('push','Tab',{}));
                     }
                 });
@@ -210,9 +211,10 @@ const styles=StyleSheet.create({
 
 });
 function select(state) {
-    console.log('当前的store:'+state.tel);
+    console.log('当前的store:'+state.authUser.tel);
     return {
-        tel:state.tel,
+        tel:state.authUser.tel,
+        uid:state.authUser.uid,
     }
 }
 export default  connect(select)(LoginScreen);

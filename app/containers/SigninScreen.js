@@ -77,7 +77,7 @@ class SigninScreen extends  Component{
             console.log("注册返回需要保存的数据: "+data);
             saveUregRes(data.payload);
             self.props.dispatch(User_SignAction(self.state.tel));
-            self.props.navigation.dispatch(navigationGo('push','LoginScreen',{}));
+            self.props.navigation.dispatch(navigationGo('push','LoginScreen',{tel:self.state.tel}));
         });
     };
     render(){
@@ -202,5 +202,11 @@ const styles = StyleSheet.create({
     },
 
 });
-
+function select(state) {
+    console.log('当前的user store:'+state.authUser.tel);
+    return {
+        tel:state.nav.tel,
+        uid:state.authUser.uid,
+    }
+}
 export default connect()(SigninScreen);

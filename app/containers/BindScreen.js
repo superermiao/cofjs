@@ -1,15 +1,18 @@
 import React,{Component} from 'react';
 import {StyleSheet, Text, View,TextInput,TouchableWithoutFeedback,AsyncStorage} from 'react-native';
 import {fetchJSON} from '../utils/NetUtils'
+import {connect} from 'react-redux'
 import {height, width,newSize} from '../utils/UtilityValue'
 import TabBarComponent from '../components/commonComponent/TabBarComponent'
 import LoginButtonComponent from '../components/commonComponent/LoginButtonComponent';
 import navigationGo from '../actions/NavigationActionsMethod'
+import {Lock_BindAction,Lock_UNBindAction} from '../actions/LockAction'
 class BindScreen extends Component{
     constructor(props){
         super(props);
         this.state={
-            deviceId:'1000040'
+            deviceId:'1000040',
+            lockId:'1001102'||'1001048',
         };
     }
 
@@ -38,7 +41,6 @@ class BindScreen extends Component{
                 TempKey   : ubindres.TempKey.slice(0,40),
                 PrivateKey: ubindres.PrivateKey,
                 UidType   : ubindres.UidType,
-                LockId    :ubindres.defaultlockid,
                 Ver       : ubindres.Ver,
                 Index     : ubindres.Index,
             };
@@ -49,11 +51,31 @@ class BindScreen extends Component{
          };
          let DpToken=randomkey^UBindData.PrivateKey;
          let DsToken=UBindData.TempKey.match(/\d{8}/g)[4]^UBindData.SecretKey;
-         let bindData=UBindData.MsgSeq+"|"+DsToken+"|"+DpToken+"|"+UBindData.UidType+"|"+this.state.deviceId+"|"+UBindData.LockId+"|"+UBindData.Ver+"|"+UBindData.Index;
-            console.log("绑定需要传的数据加载："+JSON.stringify(UBindData));
-            console.log("绑定需要发送的数据："+bindData);
-            fetchJSON("bind",bindData, function (data) {
-                console.log("绑定返回需要保存的数据: "+data.payload);
+         let bindData=UBindData.MsgSeq+"|"+DsToken+"|"+DpToken+"|"+UBindData.UidType+"|"+this.state.deviceId+"|"+this.state.lockId+"|"+UBindData.Ver+"|"+UBindData.Index;
+            console.log("绑定需要传的数据加载："+JSON.stringify(bindData));
+            let self=this;
+
+             fetchJSON("bind",bindData, function (data) {
+                if(data.error=='251'){
+                    alert('用户没登陆');
+                    return;
+                }else if(data.error=='42'){
+                    alert('网关不在线');
+                    return;
+                }else if(data.error=='43'){
+                    alert('锁已经被绑定');
+                    self.props.dispatch(Lock_BindAction(self.state.lockId,self.state.deviceId));
+                    return;
+                }else if(data.error=='45'){
+                    alert('锁已经绑定');
+                    self.props.dispatch(Lock_BindAction(self.state.lockId,self.state.deviceId));
+                    return;
+                }else if(data.error=='0'){
+                    self.props.dispatch(Lock_BindAction(self.state.lockId,self.state.deviceId));
+                    alert('绑定成功');
+                    console.log("绑定返回需要保存的数据: "+data.payload);
+                }
+
             });
         }).catch(err => {
             console.log('用户信息本地存储获取失败', err)
@@ -67,12 +89,24 @@ class BindScreen extends Component{
                 <View style={styles.view}>
 
                     <Text>输入锁的编号或者扫描锁关二维码</Text>
+                    <View style={styles.rowView}>
+                        <Text>DevId:</Text>
                     <TextInput
                         style={styles.txtInput}
-                        placeholder={'锁的编号'}
+                        placeholder={'设备的编号'}
                         value={this.state.deviceId}
                         onChangeText={(deviceId) => this.setState({deviceId})}
                     />
+                    </View>
+                    <View style={styles.rowView}>
+                        <Text>LokId:</Text>
+                        <TextInput
+                            style={styles.txtInput}
+                            placeholder={'锁的编号'}
+                            value={this.state.lockId}
+                            onChangeText={(lockId) => this.setState({lockId})}
+                        />
+                    </View>
                 </View>
                 <LoginButtonComponent name='点击绑定' onPress={()=>this.postBind()}/>
 
@@ -91,7 +125,9 @@ const styles = StyleSheet.create({
     },
     view:{
         marginTop:30*newSize,
-
+    },
+    rowView:{
+        flexDirection:'row',
     },
     txtInput:{
         width:300*newSize,
@@ -99,4 +135,10 @@ const styles = StyleSheet.create({
         height:56*newSize
     },
 });
-export default BindScreen;
+function select(state) {
+    return{
+        lockId:state.lock.lockId,
+        deviceId:state.lock.lockId,
+    }
+}
+export default connect(select)(BindScreen);

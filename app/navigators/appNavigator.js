@@ -16,6 +16,7 @@ import BindScreen from "../containers/BindScreen"
 import HomeScreen from "../containers/HomeScreen";
 import ProfileScreen from '../containers/ProfileScreen'
 import DiaryScreen from '../containers/DiaryScreen'
+import DeleteScreen from '../containers/DeleteScreen'
 
 /*TabBar的图标设置*/
 const Unlock_hover=require('../components/homeScreenComponent/images/unlock_hover.png');
@@ -50,6 +51,7 @@ const navigationOptions = {
         screen:ProfileScreen,
         navigationOptions: () => TabOptions('我的',Mine,Mine_hover),
     },
+
 
 };
 const Tab=TabNavigator({
@@ -105,6 +107,9 @@ const AppScreen={
     ProfileScreen:{
         screen:ProfileScreen
     },
+    DeleteScreen:{
+        screen:DeleteScreen
+    }
 };
 
 export const AppNavigator = StackNavigator(
