@@ -139,7 +139,7 @@ class SigninScreen extends  Component{
                     </View>
 
                     <Text style={styles.errorText}>{this.state.errorText}</Text>
-                    <LoginButtonComponent onPress={()=>this.postReg()} name="立即注册"/>
+                    {/*<LoginButtonComponent onPress={()=>this.postReg()} name="立即注册"/>*/}
                 </ScrollView>
 
                 <Text style={styles.reg} onPress={()=>this.props.navigation.dispatch(navigationGo('push','LoginScreen',{}))}>已有帐号,现在登录</Text>

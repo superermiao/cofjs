@@ -4,7 +4,7 @@ import Storage from 'react-native-storage';
 import {height, width,newSize} from '../utils/UtilityValue'
 import { NavigationActions } from 'react-navigation';
 import navigationGo from '../actions/NavigationActionsMethod'
-import TopBarComponent from '../components/homeScreenComponent/TopBarComponent'
+/*import TopBarComponent from '../components/homeScreenComponent/TopBarComponent'*/
 import { connect } from 'react-redux';
 class HomeScreen extends Component{
     constructor(props) {
@@ -34,7 +34,7 @@ class HomeScreen extends Component{
     render(){
         return(
             <View style={styles.container}>
-               <TopBarComponent title="智能锁"/>
+               {/*<TopBarComponent title="智能锁"/>*/}
                 <View style={{position:'absolute',top:0,zIndex:8}}>
                     <Image source={require('../images/bg.png')}/>
                 </View>
