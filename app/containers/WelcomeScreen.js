@@ -4,6 +4,7 @@ import Storage from 'react-native-storage';
 import {height, width,newSize} from '../utils/UtilityValue'
 import { NavigationActions } from 'react-navigation';
 import navigationGo from '../actions/NavigationActionsMethod'
+import {User_SignAction,User_LoginAction,User_LogoutAction} from '../actions/UserActions'
 import { connect } from 'react-redux';
 
 //初始化react-native-storage
@@ -25,8 +26,11 @@ class WelcomeScreen extends Component{
     componentWillMount(){
 
     }
-    goHome(){
+    goLogin(){
         this.props.navigation.dispatch(navigationGo('reset'));
+    }
+    goHome(){
+        this.props.navigation.dispatch(navigationGo('push','Tab',{}));
     }
     componentDidMount () {
        global.storage = storage;
@@ -36,13 +40,20 @@ class WelcomeScreen extends Component{
             syncInBackground: false,
         }).then(result => {
             if (result) {
-                console.log('用户信息本地存储获取成功：',result)
+                alert('用户信息本地存储获取成功：',result);
+                console.log('用户信息本地存储获取成功：',result);
+                if(result.Uid&&result.tel){
+                    this.props.dispatch(User_LoginAction(result.tel,result.Uid));
+                    this.goHome();
+                }else {
+                    this.props.dispatch(User_LoginAction(result.tel,result.Uid));
+                    this.goLogin();
+                }
                // this.props.navigation.dispatch({type:'Login',payload:result.user});
-                this.goHome();//到主页
             }
         }).catch(err => {
-            console.log('用户信息本地存储获取失败', err)
-            this.goHome();//到主页
+            console.log('用户信息本地存储获取失败', err);
+            this.goLogin();
         })
     }
     shouldComponentUpdate(nextProps,nextState){
@@ -79,5 +90,7 @@ const styles=StyleSheet.create({
 })
 const mapStateToProps = state => ({
     nav: state.nav,
+    tel:state.authUser.tel,
+    uid:state.authUser.uid
 });
 export default connect(mapStateToProps)(WelcomeScreen);

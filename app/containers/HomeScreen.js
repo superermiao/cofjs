@@ -1,19 +1,24 @@
 import React,{Component} from 'react';
-import {StyleSheet, Text, View,TextInput,TouchableWithoutFeedback,Image} from 'react-native';
+import {StyleSheet, Text, View,TextInput,TouchableWithoutFeedback,Image,StatusBar} from 'react-native';
 import Storage from 'react-native-storage';
 import {height, width,newSize} from '../utils/UtilityValue'
 import { NavigationActions } from 'react-navigation';
 import navigationGo from '../actions/NavigationActionsMethod'
-/*import TopBarComponent from '../components/homeScreenComponent/TopBarComponent'*/
 import { connect } from 'react-redux';
+import TopBarComponent from '../components/homeScreenComponent/TopBarComponent'
+import {connect} from 'react-redux';
+import {User_SignAction,User_LoginAction,User_LogoutAction} from '../actions/UserActions'
 class HomeScreen extends Component{
+
+
     constructor(props) {
         super(props);
+        let that=this;
         this.state={
             doorName:'暂无',
             doorNumber:'1001000',
-            doorAdr:'广东省深圳市南山区软件产业基地怡化科技金融大厦',
-            bindLock:'您尚未绑定锁!',
+            doorAdr:'广东省深圳市',
+            bindLock:that.props.status?'':'您尚未绑定锁!',
             battery:'无',
             connect:'无'
         }
@@ -22,7 +27,19 @@ class HomeScreen extends Component{
 
     }
     componentDidMount () {
-
+        /*storage.load({
+            key: 'user',
+            autoSync: true,
+            syncInBackground: false,
+        }).then(result => {
+            if (result) {
+                alert('用户信息本地存储获取成功：',result);
+                this.props.dispatch(User_LoginAction(result.tel,result.Uid));
+            }
+        }).catch(err => {
+            console.log('用户信息本地存储获取失败', err);
+            this.goLogin();
+        })*/
     }
     shouldComponentUpdate(nextProps,nextState){
         if(nextState !== this.state || nextProps !== this.props){
@@ -31,10 +48,11 @@ class HomeScreen extends Component{
             return false
         }
     }
+
     render(){
         return(
             <View style={styles.container}>
-               {/*<TopBarComponent title="智能锁"/>*/}
+               <TopBarComponent title="智能锁" navigation={this.props.navigation}/>
                 <View style={{position:'absolute',top:0,zIndex:8}}>
                     <Image source={require('../images/bg.png')}/>
                 </View>
@@ -70,7 +88,7 @@ class HomeScreen extends Component{
 
 }
 
-const styles=StyleSheet.create({
+const  styles=StyleSheet.create({
     container: {
         flex:1,
         backgroundColor:'#fff',
@@ -95,6 +113,11 @@ const styles=StyleSheet.create({
         marginTop:25*newSize,
         flexDirection:'row'
     }
-})
-
-export default HomeScreen;
+});
+function select(state) {
+    return{
+        uid:state.authUser.uid,
+        tel:state.authUser.tel,
+    }
+}
+export default connect(select)(HomeScreen);

@@ -5,6 +5,32 @@ import {fetchJSON} from '../utils/NetUtils'
 import {height, width,newSize} from '../utils/UtilityValue'
 import navigationGo from '../actions/NavigationActionsMethod'
 import LoginButtonComponent from '../components/commonComponent/LoginButtonComponent'
+import {User_SignAction,User_LoginAction,User_LogoutAction} from '../actions/UserActions'
+import  {connect} from 'react-redux'
+//处理注册返回之后的数据
+const saveUregRes=function (res){
+    let loginArry = res.split('|');
+    console.log(loginArry);
+    let uregResData={
+        Uid:loginArry[0],
+        TempKey:loginArry[1].slice(0,40),
+        MsgSeq:loginArry[2],
+        UidType:loginArry[3],
+        SecretKey:loginArry[4],
+        PrivateKey:loginArry[5],
+        Ver:loginArry[1].substr(81,3),
+        Index:loginArry[1].substr(84,1)
+    };
+    storage.save({
+        key:'user',
+        data:uregResData,
+        expires:null,
+    }).then(()=>{
+        console.log("数据存储成功："+JSON.stringify(uregResData));
+    }).catch((err)=>{
+        console.log("存储失败"+err);
+    });
+};
 class SigninScreen extends  Component{
     constructor(props){
         super(props);
@@ -20,23 +46,6 @@ class SigninScreen extends  Component{
             verify:'',
             errorText:'',
         }
-    }
-
-    saveUregRes(res){
-        var loginArry=res.split('|');
-        console.log(loginArry);
-        var uregResData={
-            Uid:loginArry[0],
-            TempKey:loginArry[1].slice(0,40),
-            MsgSeq:loginArry[2],
-            UidType:loginArry[3],
-            SecretKey:loginArry[4],
-            PrivateKey:loginArry[5],
-            Ver:loginArry[1].substr(81,3),
-            Index:loginArry[1].substr(84,1)
-        };
-        console.log("数据存储成功："+JSON.stringify(uregResData));
-        this.props.navigation.dispatch(navigationGo('reset'));
     }
 
  /*   checkUtiles(){
@@ -60,15 +69,17 @@ class SigninScreen extends  Component{
             }
     }*/
 
+ //提交的数据
     postReg() {
-       var user=this.state.name + "|" + this.state.cardId + "|" + this.state.tel + "|" + this.state.password + "|" + this.state.tel;
-           if(this.checkUtiles()){
-               fetchJSON("reg",user, function (data) {
-                   console.log(data);
-                   this.saveUregRes(json.payload);
-               });
-           }
-    }
+    let user=this.state.name + "|" + this.state.cardId + "|" + this.state.tel + "|" + this.state.password + "|" + '100';
+      let self=this;
+        fetchJSON("reg",user, function (data) {
+            console.log("注册返回需要保存的数据: "+data);
+            saveUregRes(data.payload);
+            self.props.dispatch(User_SignAction(self.state.tel));
+            self.props.navigation.dispatch(navigationGo('push','LoginScreen',{tel:self.state.tel}));
+        });
+    };
     render(){
         return(
             <View style={styles.container}>
@@ -121,7 +132,10 @@ class SigninScreen extends  Component{
                             hiddenPass:'密码'
                         })}
                     />
-
+                    <Text style={styles.errorText}>{this.state.errorText}</Text>
+                    <LoginButtonComponent onPress={()=>this.postReg()}  name="立即注册"/>
+                </ScrollView>
+             {/*     //验证码
                     <Text style={styles.hiddenText}>{this.state.hiddenVerify}</Text>
                     <View style={{width:300*newSize,flexDirection:'row'}}>
                         <TextInput
@@ -136,12 +150,7 @@ class SigninScreen extends  Component{
                         <View style={{marginLeft:12*newSize,justifyContent:'center'}}>
                             <Text style={{color:'#6CD6FF'}}>发送验证码</Text>
                         </View>
-                    </View>
-
-                    <Text style={styles.errorText}>{this.state.errorText}</Text>
-                    {/*<LoginButtonComponent onPress={()=>this.postReg()} name="立即注册"/>*/}
-                </ScrollView>
-
+                    </View>*/}
                 <Text style={styles.reg} onPress={()=>this.props.navigation.dispatch(navigationGo('push','LoginScreen',{}))}>已有帐号,现在登录</Text>
             </View>
         )
@@ -190,5 +199,11 @@ const styles = StyleSheet.create({
     },
 
 });
-
-export default SigninScreen;
+function select(state) {
+    console.log('当前的user store:'+state.authUser.tel);
+    return {
+        tel:state.nav.tel,
+        uid:state.authUser.uid,
+    }
+}
+export default connect()(SigninScreen);
