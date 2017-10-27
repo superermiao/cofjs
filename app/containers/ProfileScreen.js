@@ -4,7 +4,6 @@ import  {connect} from 'react-redux';
 import {fetchJSON} from '../utils/NetUtils'
 import {height, width,newSize} from '../utils/UtilityValue'
 import navigationGo from '../actions/NavigationActionsMethod'
-
 import TopBarComponent from "../components/homeScreenComponent/TopBarComponent";
 class ProfileScreen extends Component{
     constructor(props){
@@ -19,6 +18,9 @@ class ProfileScreen extends Component{
     }
     toUnBind(){
         this.props.navigation.dispatch((navigationGo('push','DeleteScreen',{})))
+    }
+    toLogin(){
+        this.props.navigation.dispatch((navigationGo('push','LoginScreen',{})))
     }
     render(){
         return(
@@ -42,7 +44,9 @@ class ProfileScreen extends Component{
                     </View>
 
                     <View style={styles.divide}>
-                        <Text style={styles.text}>意见反馈</Text>
+                        <TouchableOpacity onPress={()=>this.toLogin()}>
+                            <Text style={styles.text}>返回登录</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>

@@ -5,6 +5,7 @@ import {height, width,newSize} from '../utils/UtilityValue'
 import { NavigationActions } from 'react-navigation';
 import navigationGo from '../actions/NavigationActionsMethod'
 import {User_SignAction,User_LoginAction,User_LogoutAction} from '../actions/UserActions'
+import {Lock_BindAction,Lock_UNBindAction} from '../actions/LockAction'
 import { connect } from 'react-redux';
 
 //初始化react-native-storage
@@ -44,12 +45,14 @@ class WelcomeScreen extends Component{
                 console.log('用户信息本地存储获取成功：',result);
                 if(result.Uid&&result.tel){
                     this.props.dispatch(User_LoginAction(result.tel,result.Uid));
+                    if(result.lockId&&result.deviceId){
+                        this.props.dispatch(Lock_BindAction(result.lockId,result.deviceId))
+                    }
                     this.goHome();
                 }else {
                     this.props.dispatch(User_LoginAction(result.tel,result.Uid));
                     this.goLogin();
                 }
-               // this.props.navigation.dispatch({type:'Login',payload:result.user});
             }
         }).catch(err => {
             console.log('用户信息本地存储获取失败', err);

@@ -26,7 +26,7 @@ let saveLoginRes=function (res,tel) {
     };
     alert('登录返回的存储的数据：'+JSON.stringify(uLoginResData));
     //综合存储的数据
-    var userData=Object.assign(oldUregData,uLoginResData);
+    let userData=Object.assign(oldUregData,uLoginResData);
     alert('存储的数据为：'+JSON.stringify(userData));
     storage.save({
         key:'user',
@@ -69,7 +69,7 @@ class LoginScreen extends  Component{
                 UidType   : uregres.UidType,
                 Ver       : uregres.Ver,
                 Index     : uregres.Index,
-            }
+            };
            alert("注册返回需要加载保存的数据："+JSON.stringify(oldUregData));
         }).catch(err => {
             console.log('用户信息本地存储获取失败', err)
@@ -88,7 +88,7 @@ class LoginScreen extends  Component{
             syncInBackground: false
         }).then(res=>{
             console.log(res);
-            var uidtype,msgseq,passwd,ver,index,tempkey,mstep;
+            let uidtype,msgseq,passwd,ver,index,tempkey,mstep;
             mstep=100;
             tempkey=res.TempKey.match(/\d{8}/g);
             msgseq= res.Uid.toString()+mstep.toString();
@@ -96,7 +96,7 @@ class LoginScreen extends  Component{
             passwd=this.state.password^tempkey[4];
             ver=res.Ver;
             index=res.Index;
-            var user=msgseq+"|"+this.state.tel+"|"+uidtype+"|"+passwd+"|"+ver+"|"+index;
+            let user=msgseq+"|"+this.state.tel+"|"+uidtype+"|"+passwd+"|"+ver+"|"+index;
             alert(user);
             return user;
         }).then(user=>{
@@ -104,9 +104,9 @@ class LoginScreen extends  Component{
                 fetchJSON("login",user, function (data) {
                     console.log(data);
                     if(data.error==='30'){
-                        alert('手机号未注册');
-                    }else if(data.error==='31'){
                         alert('密码错误');
+                    }else if(data.error==='31'){
+                        alert('手机号未注册');
                     }else if(data.error==='0'){
                         saveLoginRes(data.payload,self.state.tel);
                         self.props.dispatch(User_LoginAction(self.state.tel,user.slice(0,7)));

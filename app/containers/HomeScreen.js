@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {StyleSheet, Text, View,TextInput,TouchableWithoutFeedback,Image,StatusBar} from 'react-native';
+import {StyleSheet, Text, View,TextInput,TouchableWithoutFeedback,Image,StatusBar,TouchableOpacity} from 'react-native';
 import Storage from 'react-native-storage';
 import {height, width,newSize} from '../utils/UtilityValue'
 import { NavigationActions } from 'react-navigation';
@@ -10,15 +10,12 @@ import {User_SignAction,User_LoginAction,User_LogoutAction} from '../actions/Use
 
 class HomeScreen extends Component{
 
-
     constructor(props) {
         super(props);
-        let that=this;
         this.state={
             doorName:'暂无',
             doorNumber:'1001000',
             doorAdr:'广东省深圳市',
-            bindLock:that.props.status?'':'您尚未绑定锁!',
             battery:'无',
             connect:'无'
         }
@@ -48,13 +45,18 @@ class HomeScreen extends Component{
             return false
         }
     }
+    openLock(){
+
+    }
 
     render(){
         return(
             <View style={styles.container}>
                <TopBarComponent title="智能锁" navigation={this.props.navigation}/>
                 <View style={{position:'absolute',top:0,zIndex:8}}>
-                    <Image source={require('../images/bg.png')}/>
+                    <TouchableOpacity onPress={()=>this.openLock()}>
+                        <Image source={require('../images/bg.png')}/>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.door}>
                     <Image source={require('../components/homeScreenComponent/images/door.png')}/>
@@ -70,7 +72,7 @@ class HomeScreen extends Component{
                 <View style={styles.key}>
                     <Image source={require('../components/homeScreenComponent/images/unlock.png')}/>
                 </View>
-                <Text style={{fontSize:13*newSize,color:'#909090'}}>{this.state.bindLock}</Text>
+                <Text style={{fontSize:13*newSize,color:'#909090'}}>{this.props.lockStatus?'':'您尚未绑定锁'}</Text>
                 <View style={styles.batCon}>
                     <View style={{flexDirection:'row'}}>
                         <Image source={require('../components/homeScreenComponent/images/battery.png')}/>
@@ -118,6 +120,7 @@ function select(state) {
     return{
         uid:state.authUser.uid,
         tel:state.authUser.tel,
+        lockStatus:state.lock.lockStatus,
     }
 }
 export default connect(select)(HomeScreen);

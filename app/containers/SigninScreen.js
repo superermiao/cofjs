@@ -151,9 +151,6 @@ class SigninScreen extends  Component{
                             <Text style={{color:'#6CD6FF'}}>发送验证码</Text>
                         </View>
                     </View>*/}
-
-
-
                 <Text style={styles.reg} onPress={()=>this.props.navigation.dispatch(navigationGo('push','LoginScreen',{}))}>已有帐号,现在登录</Text>
             </View>
         )

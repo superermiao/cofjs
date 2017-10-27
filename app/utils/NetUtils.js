@@ -7,7 +7,7 @@ export  const fetchJSON=function (topic,payload,callback) {
     let formData = new FormData();
     formData.append("topic",topic);
     formData.append("payload",payload);
-    fetch("localhost:8080/",{
+    fetch("http://www.cofjs.com:8080/",{
         method: 'POST',
         headers: {},
         body: formData,
