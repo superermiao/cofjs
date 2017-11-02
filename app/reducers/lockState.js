@@ -10,7 +10,7 @@ export default function lock(state = LockState, action) {
         return {lockId:action.lockId,deviceId:action.deviceId,lockStatus:true};
     }
     else if (action.type === 'LOCK_UNBIND'){
-      /*  state={};*/
+        /*  state={};*/
         return {lockId:'',deviceId:'',lockStatus:false};
     }else{
         return state;

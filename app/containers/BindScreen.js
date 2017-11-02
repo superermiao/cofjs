@@ -3,6 +3,7 @@ import {StyleSheet, Text, View,TextInput,TouchableWithoutFeedback,AsyncStorage} 
 import {fetchJSON} from '../utils/NetUtils'
 import {connect} from 'react-redux'
 import {height, width,newSize} from '../utils/UtilityValue'
+import {randomKey} from "../utils/randomkey";
 import TabBarComponent from '../components/commonComponent/TabBarComponent'
 import LoginButtonComponent from '../components/commonComponent/LoginButtonComponent';
 import navigationGo from '../actions/NavigationActionsMethod'
@@ -47,44 +48,48 @@ class BindScreen extends Component{
         }).then(ubindres=>{
             console.log('获取数据成功：',ubindres);
             UBindData=ubindres;
-           /* UBindData={
-                MsgSeq     : ubindres.MsgSeq,
-                SecretKey : ubindres.SecretKey,
-                TempKey   : ubindres.TempKey.slice(0,40),
-                PrivateKey: ubindres.PrivateKey,
-                UidType   : ubindres.UidType,
-                Ver       : ubindres.Ver,
-                Index     : ubindres.Index,
-            };*/
         }).catch(err => {
             console.log('用户信息本地存储获取失败', err);
         });
+
     }
 
 
     postBind(){
          //随机数的生成
-         let randomkey=(Math.floor(Math.random()*10000) % 8+1).toString();
-         for (var i = 0; i < 7; i++) {
-             randomkey=randomkey+ (Math.floor(Math.random()*10000) % 10).toString();
-         };
+         let randomkey=randomKey();
          let DpToken=randomkey^UBindData.PrivateKey;
          console.log('randomkey:'+randomkey);
          let DsToken=UBindData.TempKey.match(/\d{8}/g)[4]^UBindData.SecretKey;
          let bindData=UBindData.MsgSeq+"|"+DsToken+"|"+DpToken+"|"+UBindData.UidType+"|"+this.state.deviceId+"|"+this.state.lockId+"|"+UBindData.Ver+"|"+UBindData.Index;
         console.log("绑定需要传的数据加载："+bindData);
-        let self=this;             fetchJSON("bind",bindData, function (data) {
+        let self=this;
+        fetchJSON("bind",bindData, function (data) {
                 if(data.error=='251'){
                     alert('用户没登陆');
-                     self.props.navigation.dispatch('push','LoginScreen',{});
-                }else if(data.error=='42'){
+                    UBindData.TempKey=randomkey+UBindData.TempKey.substring(0,32);
+                    console.log('tempkey: '+UBindData.TempKey);
+                    /*self.props.navigation.dispatch(navigationGo('push','LoginScreen',{}));*/
+                    saveBind(UBindData);
+                }else if(data.error=='255'){
+                    alert('绑定出错了');
+                    UBindData.TempKey=randomkey+UBindData.TempKey.substring(0,32);
+                    console.log('tempkey: '+UBindData.TempKey);
+                    saveBind(UBindData);
+                } else if(data.error=='42'){
                     alert('网关不在线');
+                    UBindData.TempKey=randomkey+UBindData.TempKey.substring(0,32);
+                    console.log('tempkey: '+UBindData.TempKey);
+                    saveBind(UBindData);
                 }else if(data.error=='43'){
                     alert('锁已经被绑定');
                     self.props.dispatch(Lock_BindAction(self.state.lockId,self.state.deviceId));
+                    saveBind(UBindData);
                 }else if(data.error=='45'){
-                    alert('锁已经绑定');
+                    UBindData.TempKey=randomkey+UBindData.TempKey.substring(0,32);
+                    console.log('tempkey: '+UBindData.TempKey);
                     self.props.dispatch(Lock_BindAction(self.state.lockId,self.state.deviceId));
+                    saveBind(UBindData);
                 }else if(data.error=='0'){
                     alert('绑定成功');
                     self.props.dispatch(Lock_BindAction(self.state.lockId,self.state.deviceId));
@@ -154,8 +159,7 @@ const styles = StyleSheet.create({
 function select(state) {
     return{
         lockId:state.lock.lockId,
-        deviceId:state.lock.lockId,
-        lockStatus:state.lock.lockStatus,
-    }
+        deviceId:state.lock.deviceId,
+}
 }
 export default connect(select)(BindScreen);

@@ -88,12 +88,16 @@ class LoginScreen extends  Component{
             syncInBackground: false
         }).then(res=>{
             console.log(res);
+            console.log('密码:'+this.state.password);
             let uidtype,msgseq,passwd,ver,index,tempkey,mstep;
             mstep=100;
             tempkey=res.TempKey.match(/\d{8}/g);
             msgseq= res.Uid.toString()+mstep.toString();
+            console.log('登陆时的tempkey:'+tempkey);
             uidtype=res.UidType;
+            console.log('登陆时的密码：'+this.state.password);
             passwd=this.state.password^tempkey[4];
+            console.log('异或后的密码:'+passwd);
             ver=res.Ver;
             index=res.Index;
             let user=msgseq+"|"+this.state.tel+"|"+uidtype+"|"+passwd+"|"+ver+"|"+index;

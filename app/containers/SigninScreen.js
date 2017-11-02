@@ -202,8 +202,8 @@ const styles = StyleSheet.create({
 function select(state) {
     console.log('当前的user store:'+state.authUser.tel);
     return {
-        tel:state.nav.tel,
+        tel:state.authUser.tel,
         uid:state.authUser.uid,
     }
 }
-export default connect()(SigninScreen);
+export default connect(select)(SigninScreen);

@@ -20,7 +20,7 @@ import DeleteScreen from '../containers/DeleteScreen'
 
 /*TabBar的图标设置*/
 const Unlock_hover=require('../components/homeScreenComponent/images/unlock_hover.png');
-const Unlock=require('../components/homeScreenComponent/images/unlock.png');
+const Unlock=require('../components/homeScreenComponent/images/lock.png');
 const Diary_hover=require('../components/homeScreenComponent/images/diary_hover.png');
 const Diary=require('../components/homeScreenComponent/images/diary.png');
 const Mine_hover=require('../components/homeScreenComponent/images/mine_hover.png');
