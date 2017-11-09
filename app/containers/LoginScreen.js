@@ -157,7 +157,7 @@ class LoginScreen extends  Component{
                         })}
                     />
                     <Text style={styles.errorText}>{this.state.errorText}</Text>
-                    {/*<LoginButtonComponent onPress={()=>this.postLogin()} name="登录"/>*/}
+                    <LoginButtonComponent onPress={()=>this.postLogin()} name="登录"/>
                 </View>
 
                     <Text style={styles.forgetPass} onPress={()=>this.props.navigation.dispatch(navigationGo('push','ForgetPassScreen',{}))}>忘记密码?</Text>

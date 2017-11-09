@@ -44,7 +44,7 @@ class WelcomeScreen extends Component{
                 console.log('用户信息本地存储获取成功：',result);
                 if(result.Uid&&result.tel){
                     this.props.dispatch(User_LoginAction(result.tel,result.Uid));
-                    this.goHome();
+                    this.goLogin();
                 }else {
                     this.props.dispatch(User_LoginAction(result.tel,result.Uid));
                     this.goLogin();

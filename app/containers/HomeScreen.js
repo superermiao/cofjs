@@ -4,7 +4,6 @@ import Storage from 'react-native-storage';
 import {height, width,newSize} from '../utils/UtilityValue'
 import { NavigationActions } from 'react-navigation';
 import navigationGo from '../actions/NavigationActionsMethod'
-import { connect } from 'react-redux';
 import TopBarComponent from '../components/homeScreenComponent/TopBarComponent'
 import {connect} from 'react-redux';
 import {User_SignAction,User_LoginAction,User_LogoutAction} from '../actions/UserActions'

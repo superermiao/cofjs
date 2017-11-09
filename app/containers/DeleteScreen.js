@@ -35,7 +35,7 @@ class DeleteScreen extends Component{
             autoSync: true,
             syncInBackground: false
         }).then(ubindres=>{
-            UNBindData={
+            let UNBindData={
                 MsgSeq       : ubindres.MsgSeq,
                 SecretKey : ubindres.SecretKey,
                 TempKey   : ubindres.TempKey.slice(0,40),
