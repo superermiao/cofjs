@@ -1,4 +1,5 @@
-/*import React,{Component} from 'react';
+/*
+import React,{Component} from 'react';
 import {AsyncStorage} from 'react-native';
 import Storage from 'react-native-storage';
 
@@ -14,19 +15,21 @@ let storage = new Storage({
     enableCache: true,
 });
 
-export const saveData=function (keyname,data,expires) {
+export const saveData=function (id,data,expires) {
     storage.save({
-        key:keyname,
+        key:'user',
+        id:id,
         data:data,
         expires:expires,
     })
 }
 
-export  const inquireData=function (keyname,callback) {
+export  const inquireData=function (id,callback) {
     storage.load({
-        key:keyname,
+        key:'user',
         // autoSync(默认为true)意味着在没有找到数据或数据过期时自动调用相应的sync方法
         autoSync: true,
+        id:id,
         syncInBackground: false
     }).then(res=>{
         console.log('本地获取的数据: '+res);
@@ -46,13 +49,14 @@ export  const inquireData=function (keyname,callback) {
     });
 
 
-    export  const removeData=function (keyname){
+    export  const removeData=function (keyname,id){
         // 删除单个数据
         storage.remove({
-            key: key,
+            key: keyname,
+            id:id,
         });
     }
+};
 
-}
-
-global.storage=storage;*/
+global.storage=storage;
+*/

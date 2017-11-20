@@ -7,33 +7,30 @@ import navigationGo from '../actions/NavigationActionsMethod'
 import {fetchJSON} from '../utils/NetUtils'
 import LoginButtonComponent from '../components/commonComponent/LoginButtonComponent';
 import {User_SignAction,User_LoginAction,User_LogoutAction} from '../actions/UserActions'
+import {getCode} from '../utils/PassWord';
 
-let oldUregData={};
 let saveLoginRes=function (res,tel) {
     //处理登录返回的数据
     let loginArray=res.split('|');
     console.log(loginArray);
     let uLoginResData={
-        MsgSeq         : loginArray[0],
+        PrivateKey    : getCode(loginArray[0]),
         SToken        : loginArray[1],
-        TempKey      : loginArray[2].slice(0,40),
-        LoginAddr        : loginArray[3],
-        AppAddr         : loginArray[4],
-        masterindex    : loginArray[5],
-        viceindex      : loginArray[6],
-        defaultlockid  : loginArray[7],
+        LoginAddr     : loginArray[3],
+        bakAddr       : loginArray[4],
+        masterindex   : loginArray[5],
+        viceindex     : loginArray[6],
+        defaultlockid : loginArray[7],
         tel:tel,
     };
     alert('登录返回的存储的数据：'+JSON.stringify(uLoginResData));
-    //综合存储的数据
-    var userData=Object.assign(oldUregData,uLoginResData);
-    alert('存储的数据为：'+JSON.stringify(userData));
+    console.log('登录返回的存储的数据：'+JSON.stringify(uLoginResData));
     storage.save({
         key:'user',
-        data:userData,
+        data:uLoginResData,
         expires:null,
     });
-    return userData;
+    return uLoginResData;
 };
 class LoginScreen extends  Component{
     constructor(props){
@@ -56,7 +53,7 @@ class LoginScreen extends  Component{
     }
 
     componentDidMount(){
-        //读取user里之前的数据
+       /* //读取user里之前的数据
         storage.load({
             key:'user',
             autoSync: true,
@@ -69,55 +66,39 @@ class LoginScreen extends  Component{
                 UidType   : uregres.UidType,
                 Ver       : uregres.Ver,
                 Index     : uregres.Index,
-            }
+            };
            alert("注册返回需要加载保存的数据："+JSON.stringify(oldUregData));
         }).catch(err => {
             console.log('用户信息本地存储获取失败', err)
-        });
+        });*/
     }
 
     //登录函数
     postLogin(){
-        //检查输入值
-        //加载注册之后的信息
+        alert('密码：'+this.state.password);
+        let pwsd=getCode(this.state.password);
+       /* let pwsd=getCode('123456);*/
+        let user = this.state.tel+"|"+pwsd;
+        console.log('传递的数据: '+user);
         let self=this;
-       storage.load({
-            key:'user',
-            // autoSync(默认为true)意味着在没有找到数据或数据过期时自动调用相应的sync方法
-            autoSync: true,
-            syncInBackground: false
-        }).then(res=>{
-            console.log(res);
-            var uidtype,msgseq,passwd,ver,index,tempkey,mstep;
-            mstep=100;
-            tempkey=res.TempKey.match(/\d{8}/g);
-            msgseq= res.Uid.toString()+mstep.toString();
-            uidtype=res.UidType;
-            passwd=this.state.password^tempkey[4];
-            ver=res.Ver;
-            index=res.Index;
-            var user=msgseq+"|"+this.state.tel+"|"+uidtype+"|"+passwd+"|"+ver+"|"+index;
-            alert(user);
-            return user;
-        }).then(user=>{
-                console.log("你好，你登录传输的数据是："+user);
-                fetchJSON("login",user, function (data) {
-                    console.log(data);
-                    if(data.error==='30'){
-                        alert('手机号未注册');
-                    }else if(data.error==='31'){
-                        alert('密码错误');
-                    }else if(data.error==='0'){
-                        saveLoginRes(data.payload,self.state.tel);
-                        self.props.dispatch(User_LoginAction(self.state.tel,user.slice(0,7)));
-                        self.props.navigation.dispatch(navigationGo('push','Tab',{}));
-                    }
-                });
-
+        fetchJSON("login",user, function (data) {
+            console.log(data);
+            if(data.error==='30'){
+                alert('密码错误');
+            }else if(data.error==='256'){
+                alert('手机号未注册');
+            }else if(data.error==='33'){
+                alert('该账号请重新登陆');
+            }else if(data.error==='34'){
+                alert('电话用户匹配错误');
             }
-        ).catch((err)=>{
-            console.log(err);
-        })
+            else if(data.error==='0'){
+                saveLoginRes(data.payload,self.state.tel);
+              /*  self.props.dispatch(User_LoginAction(self.state.tel,user.slice(0,7)));*/
+                self.props.navigation.dispatch(navigationGo('push','Tab',{tel:self.state.tel}));
+            }
+        });
+
     };
 
     //跳转到注册界面
@@ -153,8 +134,13 @@ class LoginScreen extends  Component{
                         style={styles.txtInput}
                         secureTextEntry={true}
                         onFocus={()=>this.setState({
-                            hiddenPass:'密码'
+                            hiddenPass:'密码',
+
                         })}
+                        /*onBlur={()=>{
+
+                            console.log('密码：'+getCode(this.state.password))
+                        }}*/
                     />
                     <Text style={styles.errorText}>{this.state.errorText}</Text>
                     <LoginButtonComponent onPress={()=>this.postLogin()} name="登录"/>

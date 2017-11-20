@@ -1,12 +1,26 @@
 import React,{Component} from 'react';
-import {StyleSheet, Text, View,TextInput,TouchableOpacity,AsyncStorage} from 'react-native';
+import {StyleSheet, Text, View,TextInput,TouchableOpacity,AsyncStorage,ListView} from 'react-native';
 import {fetchJSON} from '../utils/NetUtils'
 import {connect} from 'react-redux'
 import {height, width,newSize} from '../utils/UtilityValue'
 import TabBarComponent from '../components/commonComponent/TabBarComponent'
+import { SwipeListView ,SwipeRow} from 'react-native-swipe-list-view';
+import {randomKey} from "../utils/randomkey";
 import LoginButtonComponent from '../components/commonComponent/LoginButtonComponent';
 import navigationGo from '../actions/NavigationActionsMethod'
 import {Lock_BindAction,Lock_UNBindAction} from '../actions/LockAction'
+/*let UNBindData={};
+const saveBind=function(data) {
+    storage.save({
+        key:'user',
+        data:data,
+        expires:null,
+    }).then(()=>{
+        console.log("数据存储成功："+JSON.stringify(data));
+    }).catch((err)=>{
+        console.log("存储失败"+err);
+    });
+};*/
 class DeleteScreen extends Component{
     constructor(props){
         super(props);
@@ -16,71 +30,60 @@ class DeleteScreen extends Component{
         };*/
     }
 
-    shouldComponentUpdate(nextProps,nextState){
-        if(nextState !== this.state || nextProps !== this.props){
+    shouldComponentUpdate(nextProps,nextState) {
+        if (nextState !== this.state || nextProps !== this.props) {
             return true
-        }else{
+        } else {
             return false
         }
     }
 
     componentDidMount(){
-
-    }
-
-    postUNBind(){
         //读取user里的数据
-        storage.load({
+       /* storage.load({
             key:'user',
             autoSync: true,
             syncInBackground: false
         }).then(ubindres=>{
-            let UNBindData={
-                MsgSeq       : ubindres.MsgSeq,
-                SecretKey : ubindres.SecretKey,
-                TempKey   : ubindres.TempKey.slice(0,40),
-                PrivateKey: ubindres.PrivateKey,
-                UidType   : ubindres.UidType,
-                Ver       : ubindres.Ver,
-                Index     : ubindres.Index,
-            };
-            //随机数的生成
-            let randomkey=(Math.floor(Math.random()*10000) % 8+1).toString();
-            for (var i = 0; i < 7; i++) {
-                randomkey=randomkey+ (Math.floor(Math.random()*10000) % 10).toString();
-            };
-            let DpToken=randomkey^UNBindData.PrivateKey;
-            let DsToken=UNBindData.TempKey.match(/\d{8}/g)[4]^UNBindData.SecretKey;
-            let unbindData=UNBindData.MsgSeq+"|"+DsToken+"|"+DpToken+"|"+UNBindData.UidType+"|"+this.props.deviceId+"|"+this.props.lockId+"|"+UNBindData.Ver+"|"+UNBindData.Index;
-            console.log("解绑需要传的数据加载："+JSON.stringify(unbindData));
-            let self=this;
-            fetchJSON("ubind",unbindData, function (data) {
-                if(data.error=='1'){
-                    alert('解绑失败');
-                    return;
-                }else if(data.error=='0'){
-                    alert('解绑成功');
-                    self.props.dispatch(Lock_UNBindAction());
-                    console.log("解绑返回需要保存的数据: "+data.payload);
-                }
-
-            });
+            UNBindData=ubindres;
         }).catch(err => {
             console.log('用户信息本地存储获取失败', err)
-        });
-
+        });*/
     }
+
+    postUNBind(){
+          /*  //随机数的生成
+            let randomkey=randomKey();
+            let DpToken=randomkey^UNBindData.PrivateKey;
+            let DsToken=UNBindData.TempKey.match(/\d{8}/g)[4]^UNBindData.SecretKey;
+            let unbindData=UNBindData.MsgSeq+"|"+DsToken+"|"+DpToken+"|"+UNBindData.UidType+"|"+this.props.lockId+"|"+UNBindData.Ver+"|"+UNBindData.Index;
+            console.log("解绑需要传的数据加载："+unbindData);
+            let self=this;
+            fetchJSON("ubind",unbindData, function (data) {
+               if(data.error=='0'){
+                    alert('解绑成功');
+                    self.props.dispatch(Lock_UNBindAction());
+                   UNBindData.TempKey=randomkey+UNBindData.TempKey.substring(0,32);
+                   delete UNBindData.lockId;
+                    saveBind(UNBindData);
+                   console.log('此时的Tempkey：'+UNBindData.TempKey);
+                    console.log("解绑返回的数据:  "+data.payload);
+                }else{
+                   alert('解绑失败');
+                   UNBindData.TempKey=randomkey+UNBindData.TempKey.substring(0,32);
+                   console.log(UNBindData.TempKey);
+                   saveBind(UNBindData);
+               }
+            });*/
+        }
+
     render(){
         return(
             <View style={styles.container}>
-                <TabBarComponent title="绑定锁" navigation={this.props.navigation} />
-                <View style={styles.view}>
+                <TabBarComponent title="解绑锁" navigation={this.props.navigation} />
 
-                    <Text>需要解锁的编号或者扫描锁关二维码</Text>
-                    <View style={styles.rowView}>
-                        <Text>DevId:</Text>
-                        <Text>{this.props.deviceId}</Text>
-                    </View>
+                <View style={styles.view}>
+                    <Text>解绑锁：侧滑删除LockId</Text>
                     <View style={styles.rowView}>
                         <Text>LokId:</Text>
                         <Text>{this.props.lockId}</Text>
@@ -92,7 +95,7 @@ class DeleteScreen extends Component{
     }
 };
 
-const styles = StyleSheet.create({
+const  styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F5FCFF',
@@ -103,6 +106,7 @@ const styles = StyleSheet.create({
         marginTop:30*newSize,
     },
     rowView:{
+        width:width,
         flexDirection:'row',
     },
     txtInput:{
@@ -110,12 +114,25 @@ const styles = StyleSheet.create({
         fontSize:16*newSize,
         height:56*newSize
     },
+    listRow: {
+        paddingLeft: 10,
+        paddingRight: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: width,
+        height: 40,
+        borderBottomColor: '#EEEEEE',
+        borderBottomWidth: 1,
+    },
 });
-function select(state) {
+
+
+function  select(state) {
     return{
         lockId:state.lock.lockId,
         deviceId:state.lock.deviceId,
-        status:state.lock.status,
     }
 }
-export default connect(select)(DeleteScreen);
+
+export default connect(select)(DeleteScreen)

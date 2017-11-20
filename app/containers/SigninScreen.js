@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {StyleSheet, Text, View,TextInput,Dimensions,TouchableWithoutFeedback,ScrollView } from 'react-native';
+import {StyleSheet, Text, View,TextInput,TouchableHighlight,ScrollView } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import {fetchJSON} from '../utils/NetUtils'
 import {height, width,newSize} from '../utils/UtilityValue'
@@ -35,16 +35,17 @@ class SigninScreen extends  Component{
     constructor(props){
         super(props);
         this.state={
-            name:'',
-            cardId:'',
+         /*   name:'',
+            cardId:'',*/
             tel:'',
             password:'',
             hiddenPhone:'',
             hiddenPass:'',
-            hiddenName:'',
+           /* hiddenName:'',
             hiddenID:'',
-            verify:'',
+            verify:'',*/
             errorText:'',
+            sms:'',
         }
     }
 
@@ -68,16 +69,29 @@ class SigninScreen extends  Component{
                 return true;
             }
     }*/
+ //发送验证码
+    sendSms(){
+        let sendData=this.state.tel+'|'+'0'+'|'+'0';
+        fetchJSON("reg",sendData,function (data) {
+            console.log('返回的数据'+data);
+        })
+
+    }
 
  //提交的数据
     postReg() {
-    let user=this.state.name + "|" + this.state.cardId + "|" + this.state.tel + "|" + this.state.password + "|" + '100';
+    let user=this.state.tel+'|'+this.state.password+'|'+this.state.sms;
       let self=this;
         fetchJSON("reg",user, function (data) {
-            console.log("注册返回需要保存的数据: "+data);
+           /* console.log("注册返回需要保存的数据: "+data);
             saveUregRes(data.payload);
-            self.props.dispatch(User_SignAction(self.state.tel));
-            self.props.navigation.dispatch(navigationGo('push','LoginScreen',{tel:self.state.tel}));
+            self.props.dispatch(User_SignAction(self.state.tel));*/
+           console.log('返回的数据：'+data);
+           if(data.error === '0'){
+               alert('注册成功');
+               self.props.navigation.dispatch(navigationGo('push','LoginScreen',{tel:self.state.tel}));
+           }
+
         });
     };
     render(){
@@ -88,7 +102,7 @@ class SigninScreen extends  Component{
                 </View>
 
                 <ScrollView style={styles.textInputView}>
-                    <Text style={styles.hiddenText}>{this.state.hiddenName}</Text>
+                    {/*<Text style={styles.hiddenText}>{this.state.hiddenName}</Text>
                     <TextInput
                         style={styles.txtInput}
                         placeholder={'请输入用户名'}
@@ -97,9 +111,9 @@ class SigninScreen extends  Component{
                         onFocus={()=>this.setState({
                             hiddenName:'姓名'
                         })}
-                    />
+                    />*/}
 
-                    <Text style={styles.hiddenText}>{this.state.hiddenID}</Text>
+                   {/* <Text style={styles.hiddenText}>{this.state.hiddenID}</Text>
                     <TextInput
                         placeholder={'输入身份证'}
                         value={this.state.cardId}
@@ -108,7 +122,7 @@ class SigninScreen extends  Component{
                         onFocus={()=>this.setState({
                             hiddenID:'身份证'
                         })}
-                    />
+                    />*/}
 
                     <Text style={styles.hiddenText}>{this.state.hiddenPhone}</Text>
                     <TextInput
@@ -132,25 +146,27 @@ class SigninScreen extends  Component{
                             hiddenPass:'密码'
                         })}
                     />
-                    <Text style={styles.errorText}>{this.state.errorText}</Text>
-                    <LoginButtonComponent onPress={()=>this.postReg()}  name="立即注册"/>
-                </ScrollView>
-             {/*     //验证码
                     <Text style={styles.hiddenText}>{this.state.hiddenVerify}</Text>
                     <View style={{width:300*newSize,flexDirection:'row'}}>
                         <TextInput
                             placeholder={'验证码'}
-                            value={this.state.verify}
-                            onChangeText={(verify) => this.setState({verify})}
+                            value={this.state.sms}
+                            onChangeText={(sms) => this.setState({sms})}
                             style={{width:173*newSize}}
                             onFocus={()=>this.setState({
                                 hiddenVerify:'验证码'
                             })}
                         />
                         <View style={{marginLeft:12*newSize,justifyContent:'center'}}>
-                            <Text style={{color:'#6CD6FF'}}>发送验证码</Text>
+                            <TouchableHighlight onPress={()=>this.sendSms()} style={{backgroundColor:'#B5B5B5'}}>
+                                 <Text style={{color:'#6CD6FF'}}>发送验证码</Text>
+                            </TouchableHighlight>
                         </View>
-                    </View>*/}
+                    </View>
+                    <Text style={styles.errorText}>{this.state.errorText}</Text>
+                    <LoginButtonComponent onPress={()=>this.postReg()}  name="立即注册"/>
+                </ScrollView>
+
                 <Text style={styles.reg} onPress={()=>this.props.navigation.dispatch(navigationGo('push','LoginScreen',{}))}>已有帐号,现在登录</Text>
             </View>
         )
@@ -202,8 +218,8 @@ const styles = StyleSheet.create({
 function select(state) {
     console.log('当前的user store:'+state.authUser.tel);
     return {
-        tel:state.nav.tel,
+        tel:state.authUser.tel,
         uid:state.authUser.uid,
     }
 }
-export default connect()(SigninScreen);
+export default connect(select)(SigninScreen);
